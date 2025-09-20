@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../config/firebase.js";
 import { useNavigate } from "react-router-dom";
 import { Lock, ChevronRight, ArrowLeft, Heart, User, Mail } from "lucide-react";
+import { doc, getDoc } from "firebase/firestore";  // import Firestore methods
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -11,19 +12,38 @@ export default function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setError("");
-        try {
-            const userCred = await signInWithEmailAndPassword(auth, email, password);
-            if (!userCred.user.emailVerified) {
-                setError("Please verify your email before logging in.");
-                return;
-            }
-            navigate("/home");
-        } catch (err) {
-            setError("Invalid email or password");
-        }
-    };
+  e.preventDefault();
+  setError("");
+  try {
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    if (!userCred.user.emailVerified) {
+      setError("Please verify your email before logging in.");
+      return;
+    }
+
+    // Fetch user data from Firestore
+    const userDocRef = doc(db, "users", userCred.user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data();
+
+      if (userData.isAdmin) {
+        // Redirect to admin dashboard if admin
+        navigate("/admin-dashboard");
+      } else {
+        // Redirect to regular user home/dashboard if not admin
+        navigate("/home");
+      }
+    } else {
+      // User document not found, fallback
+      navigate("/home");
+    }
+
+  } catch (err) {
+    setError("Invalid email or password");
+  }
+};
 
     const handleSignupClick = () => {
         navigate("/signup");

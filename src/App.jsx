@@ -3,7 +3,7 @@ import LandingPage from "./components/LandingPage";
 import Signup from "./components/Signup";
 import Login from "./components/LoginPage";
 import Home from "./components/HomePage";
-
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   return (
@@ -14,6 +14,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
       </Routes>
     </Router>
