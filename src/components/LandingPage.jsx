@@ -1,14 +1,72 @@
-import { Heart, Shield, Clock, Star, CreditCard, User, Lock, ChevronRight, X } from "lucide-react";
+import { Heart, Shield, Clock, Star, CreditCard, User, Lock, ChevronRight, X, MessageCircle, Send, Bot } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
-   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: ''
   });
+
+  // Chat states
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      type: 'bot',
+      content: 'Hello! I\'m HealthyBot 🌟 - your friendly Smart Health Card assistant! How can I help you today?',
+      timestamp: new Date()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+
+  // Predefined questions and answers organized in sets
+  const questionSets = [
+    [
+      {
+        question: "How secure is my medical data?",
+        answer: "Your medical data is protected with military-grade encryption and biometric authentication. We use advanced security protocols to ensure your information remains completely private and protected from unauthorized access."
+      },
+      {
+        question: "How do I get a Smart Health Card?",
+        answer: "Getting your Smart Health Card is easy! Simply visit our registration desk at the hospital, bring a valid ID and insurance information. Our staff will help you set up your digital card in just a few minutes."
+      },
+      {
+        question: "What information is stored on the card?",
+        answer: "Your Smart Health Card stores essential medical information including your medical history, current medications, allergies, emergency contacts, insurance details, and treatment records - all securely encrypted and accessible only by authorized healthcare providers."
+      }
+    ],
+    [
+      {
+        question: "Can I use it at other hospitals?",
+        answer: "Yes! Your Smart Health Card works with our partner healthcare network. We're continuously expanding our network to provide you seamless healthcare access across multiple facilities."
+      },
+      {
+        question: "What if I lose my card?",
+        answer: "Don't worry! Your Smart Health Card can be quickly replaced. Contact our support team immediately, and we'll deactivate the lost card and issue you a new one. All your medical data remains safe in our secure system."
+      },
+      {
+        question: "How much does it cost?",
+        answer: "The Smart Health Card is completely free for all patients! There are no setup fees, monthly charges, or hidden costs. We believe healthcare access should be affordable and convenient for everyone."
+      }
+    ],
+    [
+      {
+        question: "What are the system requirements?",
+        answer: "Our Smart Health Card works with any modern smartphone or tablet. You can also access your information through our web portal on any computer with internet access. No special apps or software required!"
+      },
+      {
+        question: "How do I update my information?",
+        answer: "You can update your personal information anytime through our secure patient portal, mobile app, or by visiting any registration desk. Changes are updated instantly across all connected healthcare facilities."
+      },
+      {
+        question: "Is there customer support available?",
+        answer: "Absolutely! Our dedicated support team is available 24/7 to help you. You can reach us by phone, email, or through our live chat. We're here to make your healthcare experience as smooth as possible."
+      }
+    ]
+  ];
+
+  const [currentQuestionSet, setCurrentQuestionSet] = useState(0);
+  const [showQuestionButtons, setShowQuestionButtons] = useState(true);
 
   const handleInputChange = (e) => {
     setLoginForm({
@@ -25,6 +83,81 @@ export default function LandingPage() {
     setShowLogin(!showLogin);
   };
 
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
+  const handlePredefinedQuestion = (qa) => {
+    setShowQuestionButtons(false);
+    
+    // Add user question
+    const userMessage = {
+      type: 'user',
+      content: qa.question,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    // Add bot answer after a short delay
+    setTimeout(() => {
+      const botMessage = {
+        type: 'bot',
+        content: qa.answer,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botMessage]);
+      
+      // Show question buttons again after answer
+      setTimeout(() => {
+        setShowQuestionButtons(true);
+      }, 1000);
+    }, 500);
+  };
+
+  const handleShowMoreQuestions = () => {
+    const nextSet = (currentQuestionSet + 1) % questionSets.length;
+    setCurrentQuestionSet(nextSet);
+    
+    // Add a system message showing new questions are available
+    const systemMessage = {
+      type: 'bot',
+      content: `Here are more questions you might find helpful! 😊`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, systemMessage]);
+  };
+
+  const handleSendMessage = () => {
+    if (inputMessage.trim()) {
+      setShowQuestionButtons(false);
+      
+      const userMessage = {
+        type: 'user',
+        content: inputMessage,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, userMessage]);
+      setInputMessage('');
+
+      // Simple bot response for custom messages
+      setTimeout(() => {
+        const botMessage = {
+          type: 'bot',
+          content: 'Thank you for your message! HealthyBot here 🌟 - For specific inquiries, please contact our support team or try one of the predefined questions above.',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
+        
+        // Show question buttons again after response
+        setTimeout(() => {
+          setShowQuestionButtons(true);
+        }, 1000);
+      }, 1000);
+    }
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
@@ -38,18 +171,16 @@ export default function LandingPage() {
           </h1>
         </div>
 
-        
         {/* Login Button */}
         <button
-      onClick={() => navigate("/login")}
-      className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
-    >
-      <User className="h-4 w-4" />
-      <span>Login</span>
-    </button>
+          onClick={() => console.log("Navigate to login")}
+          className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
+        >
+          <User className="h-4 w-4" />
+          <span>Login</span>
+        </button>
       </header>
 
-      
       {/* Main Content */}
       <main className="flex-1 px-4 sm:px-8 lg:px-12 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto">
@@ -144,6 +275,115 @@ export default function LandingPage() {
           </div>
         </div>
       </main>
+
+      {/* Chat Widget */}
+      <div className="fixed bottom-6 left-6 z-50">
+        {/* Chat Toggle Button */}
+        {!isChatOpen && (
+          <button
+            onClick={toggleChat}
+            className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 group"
+          >
+            <MessageCircle className="h-6 w-6" />
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+              !
+            </div>
+          </button>
+        )}
+
+        {/* Chat Window */}
+        {isChatOpen && (
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 sm:w-96 h-96 flex flex-col">
+            {/* Chat Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="bg-white/20 p-2 rounded-full">
+                  <Bot className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">HealthyBot 🌟</h4>
+                  <p className="text-xs opacity-90">Your health assistant</p>
+                </div>
+              </div>
+              <button
+                onClick={toggleChat}
+                className="hover:bg-white/20 p-1 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-xs px-4 py-2 rounded-2xl ${
+                      message.type === 'user'
+                        ? 'bg-gradient-to-r from-blue-600 to-green-600 text-white'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Predefined Questions */}
+              {showQuestionButtons && (
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 text-center mb-3">
+                    {messages.length <= 1 ? 'Quick questions:' : 'More questions:'}
+                  </p>
+                  {questionSets[currentQuestionSet].map((qa, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handlePredefinedQuestion(qa)}
+                      className="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-xl text-sm text-blue-700 transition-colors border border-blue-200"
+                    >
+                      {qa.question}
+                    </button>
+                  ))}
+                  
+                  {/* Show More Questions Button */}
+                  {messages.length > 1 && (
+                    <button
+                      onClick={handleShowMoreQuestions}
+                      className="w-full p-3 bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 rounded-xl text-sm text-green-700 transition-colors border border-green-200 flex items-center justify-center space-x-2"
+                    >
+                      <span>Show more questions</span>
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Chat Input */}
+            <div className="p-4 border-t border-gray-200">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Type your message..."
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-2 rounded-xl hover:shadow-lg transition-all"
+                >
+                  <Send className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
