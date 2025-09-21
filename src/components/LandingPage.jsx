@@ -1,7 +1,9 @@
 import { Heart, Shield, Clock, Star, CreditCard, User, Lock, ChevronRight, X, MessageCircle, Send, Bot } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
+  const navigate = useNavigate()
   const [showLogin, setShowLogin] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -173,7 +175,7 @@ export default function LandingPage() {
 
         {/* Login Button */}
         <button
-          onClick={() => console.log("Navigate to login")}
+          onClick={()=> navigate("/login")}
           className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
         >
           <User className="h-4 w-4" />

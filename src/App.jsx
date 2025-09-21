@@ -4,6 +4,8 @@ import Signup from "./components/Signup";
 import Login from "./components/LoginPage";
 import Home from "./components/HomePage";
 import AdminDashboard from "./components/AdminDashboard";
+import Hospital from "./components/HospitalPage";
+
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/hospital" element={<Hospital />} />
 
       </Routes>
     </Router>

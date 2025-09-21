@@ -28,11 +28,14 @@ export default function Login() {
     if (userDocSnap.exists()) {
       const userData = userDocSnap.data();
 
-      if (userData.isAdmin) {
+      if (userData.isHospital) {
+        // Redirect hospital users
+        navigate("/hospital");
+      } else if (userData.isAdmin) {
         // Redirect to admin dashboard if admin
         navigate("/admin-dashboard");
       } else {
-        // Redirect to regular user home/dashboard if not admin
+        // Redirect to regular user home/dashboard if not admin or hospital
         navigate("/home");
       }
     } else {
@@ -44,6 +47,7 @@ export default function Login() {
     setError("Invalid email or password");
   }
 };
+
 
     const handleSignupClick = () => {
         navigate("/signup");
